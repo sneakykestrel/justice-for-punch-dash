@@ -36,10 +36,10 @@ namespace JusticeForPunchDash
             bool flag = false;
             Vector3 pos = Vector3.zero;
             Vector3 goal = Vector3.zero;
-            bool flag3 = true;
+            bool flag2 = true;
 
             if (___pickup && ___pickup.GetWeaponDetails().GetProjectilePrefab().GetComponent<SpherecastProjectile>().GetCollisionType() == SpherecastProjectile.CollisionType.AllTargets) {
-                flag3 = false;
+                flag2 = false;
             }
 
             AimTarget highlightedTarget = GameManager.instance.player.GetAimManager().GetHighlightedTarget();
@@ -47,7 +47,7 @@ namespace JusticeForPunchDash
             if (highlightedTarget) {
                 pos = highlightedTarget.GetCenter();
                 Enemy.Enemy enemy = highlightedTarget.GetEnemy();
-                if (enemy && flag3 && enemy is EnemyHuman) {
+                if (enemy && flag2 && enemy is EnemyHuman) {
                     flag = true;
                     goal = enemy.transform.position + Vector3.Normalize(GameManager.instance.player.GetMovementScript().transform.position - enemy.transform.position) * 1.5f;
                 }
