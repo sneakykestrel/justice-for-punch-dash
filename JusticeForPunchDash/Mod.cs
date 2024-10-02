@@ -15,12 +15,17 @@ namespace JusticeForPunchDash
     {
         public const string pluginGuid = "kestrel.iamyourbeast.justiceforpunchdash";
         public const string pluginName = "Justice For Punch Dash";
-        public const string pluginversion = "1.0.0";
+        public const string pluginversion = "1.1.0";
 
         public static bool successfulHit = false;
 
+        public static ConfigEntry<bool> dontSaveTimes;
+
         public void Awake() {
             Logger.LogInfo("Hiiiiiiiiiiii :3");
+
+            dontSaveTimes = Config.Bind("Options", "Stop Saving Times", true, "Stops times from being saved while the mod is active to avoid accidental overwriting");
+
             Harmony harmony = new Harmony(pluginGuid);
             harmony.PatchAll();
         }
@@ -28,7 +33,7 @@ namespace JusticeForPunchDash
 
     //This patch is essentially just the important parts of the original demo Assembly-CSharp UseEquipment function reimplemented. this does mean some things will run twice but that shouldn't cause too many issues. i hope
     [HarmonyPatch(typeof(PlayerMeleeArmed), nameof(PlayerMeleeArmed.UseEquipment))]
-    public class TestPatchMelee
+    public class PatchMeleeArmed
     {
         [HarmonyPostfix]
         public static void Postfix(ref WeaponPickup ___pickup) {
@@ -74,7 +79,20 @@ namespace JusticeForPunchDash
         public static void Postfix(bool __result) {
             Mod.successfulHit = __result;
         }
+    }
 
+    //Blocks saving of times with only two (2) horrible one-liners!!
+    [HarmonyPatch(typeof(UILevelCompleteTimeScoreBar), nameof(UILevelCompleteTimeScoreBar.Initialize))]
+    public class DontSaveTimes
+    {
+        [HarmonyPrefix]
+        public static void Prefix(out float __state) {
+            __state = GameManager.instance.progressManager.GetLevelData(GameManager.instance.levelController.GetInformationSetter().GetInformation()).GetBestTime();
+        }
 
+        [HarmonyPostfix]
+        public static void Postfix(float __state) {
+            if (Mod.dontSaveTimes.Value) GameManager.instance.progressManager.GetLevelData(GameManager.instance.levelController.GetInformationSetter().GetInformation()).SetNewBestTime(__state);
+        }
     }
 }
