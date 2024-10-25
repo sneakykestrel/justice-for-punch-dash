@@ -15,7 +15,7 @@ namespace JusticeForPunchDash
     {
         public const string pluginGuid = "kestrel.iamyourbeast.justiceforpunchdash";
         public const string pluginName = "Justice For Punch Dash";
-        public const string pluginversion = "1.1.0";
+        public const string pluginversion = "1.1.2";
 
         public static bool successfulHit = false;
 
@@ -33,7 +33,7 @@ namespace JusticeForPunchDash
 
     //This patch is essentially just the important parts of the original demo Assembly-CSharp UseEquipment function reimplemented. this does mean some things will run twice but that shouldn't cause too many issues. i hope
     [HarmonyPatch(typeof(PlayerMeleeArmed), nameof(PlayerMeleeArmed.UseEquipment))]
-    public class PatchMeleeArmed
+    public class PatchMeleeEquipment
     {
         [HarmonyPostfix]
         public static void Postfix(ref WeaponPickup ___pickup) {
@@ -63,18 +63,17 @@ namespace JusticeForPunchDash
                     GameManager.instance.player.GetLookScript().TriggerTimedLockOn(pos, duration, true);
 
                     if (flag) {
-                        GameManager.instance.player.GetMovementScript().TriggerTimedLockOn(goal, duration);
+                        GameManager.instance.player.GetMovementScript().TriggerTimedLockOn(goal, duration, false);
                     }
                 }
             }
         }
-
     }
 
+    //We know that the previous patch will be run after UseEquipment has been called, so this is a good enough solution that avoids calling base class methods from within a patch (nasty)
     [HarmonyPatch(typeof(PlayerWeaponArmed), nameof(PlayerWeaponArmed.UseEquipment))]
-    public class WeaponHit
+    public class PatchWeaponEquipment
     {
-        //We know that the previous patch will be run after UseEquipment has been called, so this is a good enough solution that avoids calling base class methods from within a patch (nasty)
         [HarmonyPostfix]
         public static void Postfix(bool __result) {
             Mod.successfulHit = __result;
@@ -95,4 +94,6 @@ namespace JusticeForPunchDash
             if (Mod.dontSaveTimes.Value) GameManager.instance.progressManager.GetLevelData(GameManager.instance.levelController.GetInformationSetter().GetInformation()).SetNewBestTime(__state);
         }
     }
+
+
 }
