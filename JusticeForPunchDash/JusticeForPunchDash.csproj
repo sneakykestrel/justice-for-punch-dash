@@ -36,7 +36,7 @@
     </Reference>
     <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\I Am Your Beast\I Am Your Beast_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\Libs\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="BepInEx.Core">
       <HintPath>..\..\Libs\BepInEx.Core.dll</HintPath>
